@@ -1,45 +1,152 @@
 "use client";
-// import useSensorFeed from "@/hooks/useSensorFeed";
 
-type Sensor = {
-    id: string;
-    name: string;
-    key: string;
-    value: number;
-    unit: string;
-    status: "normal" | "warning" | "critical";
-    lastUpdated: string;
+import { useEffect, useState } from "react";
+import { useSensorStore } from "@/store/useSensorStore";
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    CartesianGrid,
+} from "recharts";
+
+type SensorReading = {
+    timestamp: number;
+    tds: number;
+    ph: number;
+    temperature: number;
 };
 
-
-const initialSensors: Sensor[] = [
-    { id: "ph", name: "pH Level", key: "ph", value: 7.12, unit: "", status: "normal", lastUpdated: new Date().toISOString() },
-    { id: "turb", name: "Turbidity", key: "turbidity", value: 3.8, unit: "NTU", status: "normal", lastUpdated: new Date().toISOString() },
-    { id: "temp", name: "Temperature", key: "temperature", value: 24.6, unit: "°C", status: "normal", lastUpdated: new Date().toISOString() },
-    { id: "chlor", name: "Residual Chlorine", key: "chlorine", value: 1.18, unit: "mg/L", status: "normal", lastUpdated: new Date().toISOString() },
-];
-
 export default function SensorsPage() {
-    const sensors = initialSensors;
+    const { tds, ph, temperature, timestamp } = useSensorStore((s) => s.data);
+
+    const [history, setHistory] = useState<SensorReading[]>([]);
+
+    // Push incoming sensor data to history
+    useEffect(() => {
+        if (
+            timestamp === undefined ||
+            tds === undefined ||
+            ph === undefined ||
+            temperature === undefined
+        ) {
+            return;
+        }
+
+        setHistory((prev) => [
+            ...prev.slice(-50),
+            {
+                timestamp,
+                tds,
+                ph,
+                temperature,
+            },
+        ]);
+    }, [timestamp, tds, ph, temperature]);
 
     return (
-        <div className="">
+        <div className="space-y-8">
             <h2 className="text-lg font-semibold mb-4">Sensors Overview</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {sensors.map((s) => (
-                    <div key={s.key} className="p-4 bg-[#121212]/60 border border-gray-700 rounded-xl">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <p className="text-gray-300 text-sm">{s.name}</p>
-                                <p className="text-xs text-gray-500">Last updated: {new Date().toLocaleTimeString()}</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-2xl font-semibold">{s.value.toFixed(2)} <span className="text-gray-500 text-sm">{s.unit}</span></p>
-                                <p className="text-xs text-gray-400">{s.status}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+
+            {/* ----- TDS CHART ----- */}
+            <div className="p-4 bg-[#121212]/60 border border-gray-700 rounded-xl">
+                <h3 className="text-white font-medium mb-2">TDS Over Time</h3>
+                <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={history}>
+                            <defs>
+                                <linearGradient id="tdsColor" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.7} />
+                                    <stop offset="95%" stopColor="#22d3ee" stopOpacity={0.1} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                            <XAxis
+                                dataKey="timestamp"
+                                tickFormatter={(t) => new Date(t).toLocaleTimeString()}
+                                stroke="#aaa"
+                            />
+                            <YAxis stroke="#aaa" />
+                            <Tooltip
+                                labelFormatter={(t) => new Date(t).toLocaleTimeString()}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="tds"
+                                stroke="#22d3ee"
+                                fill="url(#tdsColor)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+
+            {/* ----- PH CHART ----- */}
+            <div className="p-4 bg-[#121212]/60 border border-gray-700 rounded-xl">
+                <h3 className="text-white font-medium mb-2">pH Over Time</h3>
+                <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={history}>
+                            <defs>
+                                <linearGradient id="phColor" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#4ade80" stopOpacity={0.7} />
+                                    <stop offset="95%" stopColor="#4ade80" stopOpacity={0.1} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                            <XAxis
+                                dataKey="timestamp"
+                                tickFormatter={(t) => new Date(t).toLocaleTimeString()}
+                                stroke="#aaa"
+                            />
+                            <YAxis stroke="#aaa" />
+                            <Tooltip
+                                labelFormatter={(t) => new Date(t).toLocaleTimeString()}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="ph"
+                                stroke="#4ade80"
+                                fill="url(#phColor)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+
+            {/* ----- TEMPERATURE CHART ----- */}
+            <div className="p-4 bg-[#121212]/60 border border-gray-700 rounded-xl">
+                <h3 className="text-white font-medium mb-2">Temperature Over Time</h3>
+                <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={history}>
+                            <defs>
+                                <linearGradient id="tempColor" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#f87171" stopOpacity={0.7} />
+                                    <stop offset="95%" stopColor="#f87171" stopOpacity={0.1} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                            <XAxis
+                                dataKey="timestamp"
+                                tickFormatter={(t) => new Date(t).toLocaleTimeString()}
+                                stroke="#aaa"
+                            />
+                            <YAxis stroke="#aaa" />
+                            <Tooltip
+                                labelFormatter={(t) => new Date(t).toLocaleTimeString()}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="temperature"
+                                stroke="#f87171"
+                                fill="url(#tempColor)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
         </div>
     );

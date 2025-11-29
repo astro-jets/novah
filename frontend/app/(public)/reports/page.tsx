@@ -1,6 +1,10 @@
 "use client";
 
+import ChartComponent from "@/components/Chart";
+import { useSensorStore } from "@/store/useSensorStore";
+
 export default function ReportsPage() {
+    const { tds, ph, temperature, timestamp } = useSensorStore((s) => s.data);
     return (
         <div className="">
             <h2 className="text-lg font-semibold mb-4">Reports</h2>
@@ -16,17 +20,19 @@ export default function ReportsPage() {
                     Schedule Weekly
                 </button>
             </div>
-
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-[#121212]/60 p-4 border border-gray-700 rounded-xl">
-                    <h3 className="text-gray-300 text-sm">Daily Summary</h3>
-                    <p className="text-xs text-gray-500 mt-2">[Data summary placeholder]</p>
+            {ph &&
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-[#121212]/60 p-4 border border-gray-700 rounded-xl">
+                        <h3 className="text-gray-300 text-sm">Daily Summary</h3>
+                        <ChartComponent ph={ph as number} tds={tds as number} temperature={temperature as number} timestamp={timestamp as number} />
+                    </div>
+                    <div className="bg-[#121212]/60 p-4 border border-gray-700 rounded-xl">
+                        <h3 className="text-gray-300 text-sm">Weekly Trends</h3>
+                        <ChartComponent ph={ph as number} tds={tds as number} temperature={temperature as number} timestamp={timestamp as number} />
+                    </div>
                 </div>
-                <div className="bg-[#121212]/60 p-4 border border-gray-700 rounded-xl">
-                    <h3 className="text-gray-300 text-sm">Weekly Trends</h3>
-                    <p className="text-xs text-gray-500 mt-2">[Chart placeholder]</p>
-                </div>
-            </div>
+            }
         </div>
+
     );
 }

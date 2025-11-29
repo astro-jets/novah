@@ -27,7 +27,7 @@ export default function RootLayout({
             <SideBar />
             <div className="flex flex-col gap-6 w-[80%]">
               <TopBar />
-              <div className="p-6">
+              <div className="px-4 py-2">
                 <SensorProvider>
                   {children}
                 </SensorProvider>

@@ -69,11 +69,7 @@ app.get("/api/status", async (req, res) => {
 
   const data = await Promise.race([esp32Promise, timeoutPromise]);
 
-  // if (!data) {
-  //   return res.json({
-  //     error: "ESP32 unreachable fuckkk!!",
-  //   });
-  // }
+  // Save to JSON for Database Migration later
 
   res.json(data);
 });
