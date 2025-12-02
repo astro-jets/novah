@@ -76,13 +76,14 @@ export default function MaintenancePage() {
                         onClick={() => setShowForm(true)}
                         className="flex cursor-pointer items-center gap-2 px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white transition-colors"
                     >
-                        <FaPlus /> New Request
+                        <FaPlus /> New Request +
                     </button>
                     <button
                         onClick={downloadTable}
                         className="flex cursor-pointer items-center gap-2 px-4 py-2 rounded-xl bg-[#0b1116]/70 border border-gray-800 hover:bg-[#131b22] transition-colors"
                     >
                         <FaRegFilePdf /> Download PDF
+
                     </button>
                 </div>
             </div>
