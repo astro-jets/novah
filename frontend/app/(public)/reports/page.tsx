@@ -257,7 +257,7 @@ export default function ReportsPage() {
  */
 function StatusCard({ title, value, color }: { title: string, value: number, color: string }) {
     return (
-        <div className="bg-[#121212]/60 p-4 border border-gray-700 rounded-xl flex flex-col rounded-2xl">
+        <div className="bg-[#121212]/60 p-4 border border-gray-700  flex flex-col rounded-2xl">
             <p className="text-sm font-medium text-gray-400 mb-1">{title}</p>
             <p className={`text-4xl font-bold ${color}`}>{value}</p>
         </div>
