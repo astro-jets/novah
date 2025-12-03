@@ -19,14 +19,3 @@ export const toggleAuto = async () => {
 export const manualDose = async (ammount: number) => {
   await fetch(`http://localhost:5000/api/pump/manual/${ammount}`);
 };
-
-// export const getStatus = async () => {
-//   const res = await fetch("http://localhost:5000/api/status", {
-//     cache: "no-store",
-//   });
-
-//   if (!res.ok) throw new Error("Server error");
-
-//   const data = await res.json();
-//   return data;
-// };
